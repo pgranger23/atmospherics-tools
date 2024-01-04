@@ -78,7 +78,7 @@ void Calculator<T>::SetOscCalculator(osc::PMNS *pmns, osc::EarthModel *earth, fl
     _earth = earth;
     _prodh = prodh;
     _rdet = rdet;
-};
+}
 
 template <typename T>
 std::tuple<double, double> Calculator<T>::GetOscWeight(double E, double costh, Flavour final){
