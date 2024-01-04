@@ -1,4 +1,5 @@
 #include "Writer.h"
+#include "TH1D.h"
 #include <iostream>
 
 Writer::Writer(std::string fname)
@@ -10,6 +11,18 @@ Writer::Writer(std::string fname)
 Writer::~Writer()
 {
     _file->Close();
+}
+
+void Writer::AddNorm(){
+    _file->cd();
+    TH1D *norm = new TH1D("norm","norm",10,0,10);
+    norm->SetDirectory(_file);
+    // Set norm bin 1 content (neutrino type normalisation)
+    double val = 1e21;
+    norm->SetBinContent(2,val);
+    norm->SetBinContent(1,6e-5);
+    norm->Write();
+    delete norm;
 }
 
 void Writer::Create(std::string fname)
@@ -55,17 +68,28 @@ void Writer::SetupTree(){
     _tree->Branch("LepNuAngle",&_data.LepTheta); 
     _tree->Branch("Q2",&_data.Q2);
     _tree->Branch("weight",&_data.weight);
-    _tree->Branch("flux_nue",&_data.weight);
-    _tree->Branch("flux_numu",&_data.weight);
-    _tree->Branch("xsec",&_data.weight);
+    _tree->Branch("flux_nue",&_data.flux_nue);
+    _tree->Branch("flux_numu",&_data.flux_numu);
+    _tree->Branch("xsec",&_data.xsec);
     _tree->Branch("nue_w",&_data.nue_w);
     _tree->Branch("numu_w",&_data.numu_w);
+    _tree->Branch("osc_from_e_w",&_data.osc_from_e_w);
+    _tree->Branch("osc_from_mu_w",&_data.osc_from_mu_w);
+    _tree->Branch("final_oscillated_w",&_data.final_oscillated_w);
+    _tree->Branch("genie_weight",&_data.genie_weight);
+
+    //Current location of systs weights
+    _tree->Branch("xsSyst_wgt",&_data.weightVec);
 }
 
 void Writer::Write(){
     // _tree->SetDirectory(_file);
     std::cout << "Nentries: " << _tree->GetEntries() << std::endl;
     _tree->Write();
+
+    for(TTree *tree : _additional_trees){
+        tree->Write();
+    }
 }
 
 void Writer::WriteFile(){
@@ -74,7 +98,20 @@ void Writer::WriteFile(){
 }
 
 TTree* Writer::GetTree(){
+    _file->cd();
     TTree* tree = static_cast<TTree*>(_tree->CloneTree());
     // tree->SetDirectory(0);
     return tree;
+}
+
+void Writer::AddTree(TTree *tree){
+    if(tree != nullptr){
+        TTree* new_tree = tree->CloneTree();
+        new_tree->SetDirectory(_file);
+        _additional_trees.push_back(new_tree);
+    }
+    else{
+        std::cout << "ERROR: Cannot add a null tree to Writer! Fix your code!" << std::endl;
+        abort();
+    }
 }

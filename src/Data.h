@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 template <typename T>
 struct Data
@@ -20,7 +21,7 @@ struct Data
     int nuPDG;
     int run;
     int isFHC;
-    T BeRPA_cvwgt;
+    T BeRPA_cvwgt = 1;
     T vtx_x;
     T vtx_y;
     T vtx_z; 
@@ -28,11 +29,17 @@ struct Data
     T LepTheta; 
     T Q2;
     double weight; //Have to hardcode that here for now.
+    double genie_weight; //Have to hardcode that here for now.
     T flux_nue;
     T flux_numu;
     T xsec;
     T nue_w;
     T numu_w;
+    T BeRPA_A_cvwgt = 1;
+    T osc_from_e_w = 0;
+    T osc_from_mu_w = 0;
+    T final_oscillated_w = 0;
+    std::vector<std::vector<float>> *weightVec;
 };
 
 static inline Data<double> float2double(const Data<float>& data){
@@ -67,6 +74,10 @@ static inline Data<double> float2double(const Data<float>& data){
     data_D.xsec = data.xsec;
     data_D.nue_w = data.nue_w;
     data_D.numu_w = data.numu_w;
+    data_D.BeRPA_A_cvwgt = data.BeRPA_A_cvwgt;
+    data_D.weightVec = data.weightVec;
+    data_D.genie_weight = data.genie_weight;
+
 
     return data_D;
 };

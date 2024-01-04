@@ -47,6 +47,15 @@ void Reader<T>::Open(std::string fname)
         abort();
     }
     _tree = tree;
+
+
+    //Loading the gloabl tree
+    TTree *global_tree;
+    _file->GetObject("globalTree", global_tree);
+    if(global_tree == nullptr){
+        std::cout << "WARNING: No tree named 'globalTree' in the input file " << fname << std::endl;
+    }
+    _global_tree = global_tree;
 }
 
 template<typename T>
@@ -76,12 +85,19 @@ void Reader<T>::SetupTree(){
     _tree->SetBranchAddress(start_str + "LepPDG",&_data.ipnu); 
     _tree->SetBranchAddress(start_str + "LepNuAngle",&_data.LepTheta); 
     _tree->SetBranchAddress(start_str + "Q2",&_data.Q2);
+    
+    //Current location of systs weights
+    _tree->SetBranchAddress("xsSyst_wgt",&_data.weightVec);
 
     if(_is_flat){
         _tree->SetBranchAddress(start_str + "pot",&_data.weight); //The weight is stored here in a hacky way at the moment.
     }
     else{
         _tree->SetBranchAddress(start_str + "weight",&_data.weight);
+        _tree->SetBranchAddress("genie_weight",&_data.genie_weight); //The weight is stored here in a hacky way at the moment.
+        _tree->SetBranchAddress("nue_w",&_data.nue_w);
+        _tree->SetBranchAddress("numu_w",&_data.numu_w);
+        _tree->SetBranchAddress("xsec",&_data.xsec);
     }
     
 }
@@ -119,6 +135,11 @@ bool Reader<T>::GetEntry(int i){
 template<typename T>
 const Data<T>& Reader<T>::GetData(){
     return _data;
+}
+
+template<typename T>
+TTree* Reader<T>::GetGlobalTree(){
+    return _global_tree;
 }
 
 template class Reader<float>;

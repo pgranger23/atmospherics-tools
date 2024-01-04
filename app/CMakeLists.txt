@@ -19,7 +19,7 @@ endif(ROOT_FOUND)
 
 add_executable(weightor weightor.cxx)
 target_link_libraries(weightor
-  LINK_PUBLIC WeightorIO ROOT::EG ${ROOT_LIBRARIES})
+  LINK_PUBLIC WeightorIO ROOT::EG ${ROOT_LIBRARIES} OscLib argparse)
 
 add_executable(split_channels split_channels.cxx)
 target_link_libraries(split_channels

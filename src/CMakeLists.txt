@@ -16,8 +16,13 @@ set(CMAKE_VERBOSE_MAKEFILE TRUE)
 find_package(ROOT REQUIRED
   COMPONENTS Geom Physics Matrix MathCore Tree RIO)
 if(ROOT_FOUND)
+cmessage(STATUS "ROOT_USEFILE: ${ROOT_USE_FILE}")
   include(${ROOT_USE_FILE})
 endif(ROOT_FOUND)
+
+find_package(OscLib REQUIRED $ENV{OSCLIB_INC} $ENV{OSCLIB_LIB})
+find_package(Eigen3Local REQUIRED $ENV{EIGEN_INC})
+cmessage(STATUS "EIGEN: ${OscLib_LIBS}")
 
 # Define the source and include files that should be used for the io
 # part of ERepSim.
@@ -30,7 +35,7 @@ set(includes_IO
   Reader.h Flux.h FluxManager.h Calculator.h Writer.h
   )
 
-############################driftSim############################
+############################Weightor############################
 
 add_library(WeightorIO SHARED ${source_IO} ${includes_IO})
 
@@ -44,6 +49,10 @@ install(TARGETS WeightorIO
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include/WeightorIO)
 
+
+
+ROOT_GENERATE_DICTIONARY(stl_dict MODULE WeightorIO LINKDEF LinkDef.h)
+
 # Install the header files.
 install(FILES ${includes_IO} DESTINATION include/WeightorIO)
 
@@ -51,3 +60,6 @@ install(FILES ${includes_IO} DESTINATION include/WeightorIO)
 # compilation.  This is required to make ROOT_GENERATE_DICTIONARY
 # work.
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+# target_include_directories(WeightorIO PUBLIC OscLib::All Eigen3::Eigen)
+target_link_libraries(WeightorIO LINK_PUBLIC OscLib::All Eigen3::Eigen)

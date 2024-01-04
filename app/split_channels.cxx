@@ -3,6 +3,8 @@
 #include "Writer.h"
 #include "Calculator.h"
 
+#define CHEATING 1
+
 enum Sel{
     SelNuE,
     SelNuMu
@@ -11,13 +13,13 @@ enum Sel{
 int main(int argc, char const *argv[])
 {
     std::map<Flavour, std::string> fluxes = {
-        {Flavour::NuE, "/home/pgranger/atmospherics/honda_2d_homestake_2015_nue.root"},
-        {Flavour::NuMu, "/home/pgranger/atmospherics/honda_2d_homestake_2015_numu.root"},
-        {Flavour::NuEBar, "/home/pgranger/atmospherics/honda_2d_homestake_2015_nuebar.root"},
-        {Flavour::NuMuBar, "/home/pgranger/atmospherics/honda_2d_homestake_2015_numubar.root"},
+        {Flavour::NuE, "/home/pgranger/atmospherics/honda/honda_2d_homestake_2015_nue.root"},
+        {Flavour::NuMu, "/home/pgranger/atmospherics/honda/honda_2d_homestake_2015_numu.root"},
+        {Flavour::NuEBar, "/home/pgranger/atmospherics/honda/honda_2d_homestake_2015_nuebar.root"},
+        {Flavour::NuMuBar, "/home/pgranger/atmospherics/honda/honda_2d_homestake_2015_numubar.root"},
     };
 
-    std::string ifilename("/home/pgranger/atmospherics/debug/MaCh3_DUNE/sum.root");
+    std::string ifilename("/home/pgranger/atmospherics/merged_caf_systs_new_hd.root");
     std::string ofilename("/home/pgranger/atmospherics/debug/MaCh3_DUNE/output.root");
     std::string ofolder("/home/pgranger/atmospherics/debug/MaCh3_DUNE/");
 
@@ -67,15 +69,44 @@ int main(int argc, char const *argv[])
         Data<double> data = new_reader.GetData();
         Sel sel;
         // std::cout << data.ev  << std::endl;
-        if(data.cvnnue > 0.5){
+
+        #ifdef CHEATING
+
+        if(abs(data.nuPDG) == 12){
             sel = Sel::SelNuE;
+            if(data.erec_nue <= 0.1){
+                continue;
+            }
         }
-        else if(data.cvnnumu > 0.5){
+        else if(abs(data.nuPDG) == 14){
             sel = Sel::SelNuMu;
+            if(data.erec <= 0.1){
+                continue;
+            }
         }
         else{
             continue;
         }
+
+        #else
+
+        if(data.cvnnue > 0.8){
+            sel = Sel::SelNuE;
+            if(data.erec_nue <= 0.1){
+                continue;
+            }
+        }
+        else if(data.cvnnumu > 0.8){
+            sel = Sel::SelNuMu;
+            if(data.erec <= 0.1){
+                continue;
+            }
+        }
+        else{
+            continue;
+        }
+
+        #endif
 
         Flavour ofl = Flavour(data.nuPDG);
         std::vector<Flavour> ifls;
@@ -102,8 +133,10 @@ int main(int argc, char const *argv[])
             std::cout << "!= 1" << std::endl;
             channel.second->_file->GetList()->Print();
         }
+        channel.second->AddNorm();
+        channel.second->AddTree(reader.GetGlobalTree());
         channel.second->Write();
-        // channel.second->WriteFile();
+        channel.second->WriteFile();
     }
 
     return 0;

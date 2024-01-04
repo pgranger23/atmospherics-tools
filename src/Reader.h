@@ -13,6 +13,7 @@ private:
     std::string _fname = "";
     TFile *_file = nullptr;
     TTree *_tree = nullptr;
+    TTree *_global_tree = nullptr;
     double _POT = 0;
     Data<T> _data;
     int _nentries;
@@ -30,4 +31,5 @@ public:
     double POT(){return _POT;};
     bool GetEntry(int i = -1);
     const Data<T>& GetData();
+    TTree* GetGlobalTree();
 };
