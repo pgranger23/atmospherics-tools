@@ -1,5 +1,6 @@
 #include "FluxManager.h"
 #include "Reader.h"
+#include "DirWriter.h"
 #include "Writer.h"
 #include "Calculator.h"
 #include <argparse/argparse.hpp>
@@ -113,9 +114,9 @@ int main(int argc, char const *argv[])
 
 
     FluxManager manager(fluxes);
-    Reader<float> reader(ifilename, true);
+    Reader<float> reader(ifilename);
 
-    Writer writer(ofilename);
+    DirWriter writer("atm_weights", reader.GetFile());
 
     Calculator<float> calc(manager, reader, writer, exposure_scaling);
 

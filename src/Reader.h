@@ -5,11 +5,18 @@
 #include <memory>
 #include "Data.h"
 
+enum CAFtype{
+    OLD_CAF,
+    FLAT_CAF,
+    NEW_CAF,
+    UNDEFINED
+};
+
 template <typename T>
 class Reader
 {
 private:
-    bool _is_flat = false;
+    CAFtype _caftype = CAFtype::UNDEFINED;
     std::string _fname = "";
     TFile *_file = nullptr;
     TTree *_tree = nullptr;
@@ -22,14 +29,17 @@ private:
 
     void Open(std::string fname);
     void SetupTree();
+    void SetupTreeHierarchical();
     void GetPOT();
+    CAFtype DetectCAFType();
 
 public:
-    Reader(std::string fname, bool is_flat);
+    Reader(std::string fname);
     Reader(TTree *tree);
     ~Reader();
     double POT(){return _POT;};
     bool GetEntry(int i = -1);
     const Data<T>& GetData();
     TTree* GetGlobalTree();
+    TFile* GetFile();
 };
