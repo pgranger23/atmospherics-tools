@@ -62,4 +62,12 @@ install(FILES ${includes_IO} DESTINATION include/WeightorIO)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # target_include_directories(WeightorIO PUBLIC OscLib::All Eigen3::Eigen)
-target_link_libraries(WeightorIO LINK_PUBLIC OscLib::All Eigen3::Eigen)
+target_link_libraries(WeightorIO LINK_PUBLIC OscLib::All Eigen3::Eigen
+                      duneanaobj::StandardRecordProxy
+                      duneanaobj::StandardRecordFlat
+                      duneanaobj::StandardRecord
+                      duneanaobj::StandardRecord_dict)
+target_include_directories(WeightorIO
+  PRIVATE
+  $ENV{SRPROXY_INC}
+)

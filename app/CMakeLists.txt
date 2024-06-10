@@ -20,27 +20,19 @@ endif(ROOT_FOUND)
 add_executable(weightor weightor.cxx)
 target_link_libraries(weightor
   LINK_PUBLIC WeightorIO ROOT::EG ${ROOT_LIBRARIES} OscLib argparse)
+target_compile_features(weightor PRIVATE cxx_std_17)
+target_include_directories(weightor
+  PRIVATE
+  $ENV{SRPROXY_INC}
+)
 
 add_executable(split_channels split_channels.cxx)
 target_link_libraries(split_channels
   LINK_PUBLIC WeightorIO ROOT::EG ${ROOT_LIBRARIES})
-
-# add_executable(fit_curvature fit_curvature.cxx)
-# target_link_libraries(fit_curvature
-#   LINK_PUBLIC driftSim ${ROOT_LIBRARIES} matplotlib_cpp ROOT::EG ROOT::Minuit)
-
-# add_executable(asimov asimov.cxx)
-# target_link_libraries(asimov
-#   LINK_PUBLIC driftSim ${ROOT_LIBRARIES} matplotlib_cpp ROOT::EG ROOT::Minuit)
-
-# add_executable(compare_3G compare_3G.cxx)
-# target_link_libraries(compare_3G
-#   LINK_PUBLIC driftSim ${ROOT_LIBRARIES} ROOT::EG matplotlib_cpp)
-
-# find_package(OpenMP)
-# if(OpenMP_CXX_FOUND)
-#     target_link_libraries(build_displacement_map PUBLIC OpenMP::OpenMP_CXX)
-# endif()
+target_include_directories(split_channels
+  PRIVATE
+  $ENV{SRPROXY_INC}
+)
 
 install(TARGETS weightor split_channels RUNTIME DESTINATION bin)
 

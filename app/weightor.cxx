@@ -111,8 +111,6 @@ int main(int argc, char const *argv[])
     std::string earth_model = parser.get<std::string>("earthmodel");
     std::vector<float> pmns_params = parser.get<std::vector<float>>("--pmns");
 
-
-
     FluxManager manager(fluxes);
     Reader<float> reader(ifilename);
 
@@ -131,7 +129,6 @@ int main(int argc, char const *argv[])
     calc.SetOscCalculator(&pmns, &earth, prodh, deth);
     calc.Process();
     writer.Write();
-    
 
     return 0;
 }

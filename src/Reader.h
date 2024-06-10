@@ -4,19 +4,15 @@
 #include <iostream>
 #include <memory>
 #include "Data.h"
-
-enum CAFtype{
-    OLD_CAF,
-    FLAT_CAF,
-    NEW_CAF,
-    UNDEFINED
-};
+// duneanaobj
+#include "duneanaobj/StandardRecord/Proxy/FwdDeclare.h"
+#include "duneanaobj/StandardRecord/Proxy/SRProxy.h"
+#include "duneanaobj/StandardRecord/StandardRecord.h"
 
 template <typename T>
 class Reader
 {
 private:
-    CAFtype _caftype = CAFtype::UNDEFINED;
     std::string _fname = "";
     TFile *_file = nullptr;
     TTree *_tree = nullptr;
@@ -25,16 +21,16 @@ private:
     Data<T> _data;
     int _nentries;
     int _entry = -1;
-    
+    caf::StandardRecordProxy* _sr = nullptr;
 
-    void Open(std::string fname);
+    void Open(std::string fname, std::string subfolder);
     void SetupTree();
     void SetupTreeHierarchical();
     void GetPOT();
-    CAFtype DetectCAFType();
+    void UpdateData();
 
 public:
-    Reader(std::string fname);
+    Reader(std::string fname, std::string subfolder = "");
     Reader(TTree *tree);
     ~Reader();
     double POT(){return _POT;};
