@@ -92,8 +92,8 @@ int main(int argc, char const *argv[])
 
     std::map<Flavour, std::string> fluxes = {
         {Flavour::NuE, nue_file},
-        {Flavour::NuMu, nuebar_file},
-        {Flavour::NuEBar, numu_file},
+        {Flavour::NuMu, numu_file},
+        {Flavour::NuEBar, nuebar_file},
         {Flavour::NuMuBar, numubar_file},
     };
 
