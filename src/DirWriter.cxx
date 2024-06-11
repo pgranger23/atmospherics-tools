@@ -2,7 +2,7 @@
 #include <iostream>
 #include "DirWriter.h"
 
-DirWriter::DirWriter(std::string name, TFile *cur_file)
+DirWriter::DirWriter(std::string name)
 {
     this->Create(name);
     this->SetupTree();
@@ -14,11 +14,21 @@ DirWriter::~DirWriter()
 
 void DirWriter::Create(std::string name)
 {
-    std::cout << "Create a directory in the same file" << std::endl;
-    TDirectory *direc = new TDirectory(name.c_str(), name.c_str());
+    // TDirectory *direc = gDirectory;
+    // if(!name.empty()){
+    //     std::cout << "Create a directory in the same file" << std::endl;
+    //     direc = new TDirectory(name.c_str(), name.c_str());
+    // }
 
+    std::cout << "Opening output file: " << name << std::endl;
+    _file = TFile::Open(name.c_str(), "RECREATE");
+    if(_file == nullptr){
+        std::cout << "Could not open file: " << name << std::endl;
+        abort();
+    }
     _tree = new TTree("weights", "weights");
-    _tree->SetDirectory(direc);
+    _tree->SetDirectory(_file);
+    
 }
 
 void DirWriter::SetupTree(){

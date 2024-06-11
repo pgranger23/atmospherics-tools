@@ -2,6 +2,10 @@
 #include "TH1D.h"
 #include <iostream>
 
+Writer::Writer()
+{
+}
+
 Writer::Writer(std::string fname)
 {
     this->Create(fname);
@@ -10,7 +14,8 @@ Writer::Writer(std::string fname)
 
 Writer::~Writer()
 {
-    _file->Close();
+    if(_file)
+        _file->Close();
 }
 
 void Writer::AddNorm(){
@@ -106,12 +111,16 @@ TTree* Writer::GetTree(){
 
 void Writer::AddTree(TTree *tree){
     if(tree != nullptr){
-        TTree* new_tree = tree->CloneTree();
-        new_tree->SetDirectory(_file);
-        _additional_trees.push_back(new_tree);
+        // TTree* new_tree = tree->CloneTree();
+        tree->SetDirectory(_file);
+        _additional_trees.push_back(tree);
     }
     else{
         std::cout << "ERROR: Cannot add a null tree to Writer! Fix your code!" << std::endl;
         abort();
     }
+}
+
+TFile* Writer::GetFile(){
+    return _file;
 }

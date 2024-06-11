@@ -43,11 +43,13 @@ void Reader<T>::Open(std::string fname, std::string subfolder)
     }
 
     std::string tree_name = "cafTree";
-    std::string globtree_name = "globalTree";
+    std::string globtree_name = "meta";
+    std::string genietree_name = "genieEvt";
 
     if(!subfolder.empty()){
         tree_name = subfolder + "/" + tree_name;
         globtree_name = subfolder + "/" + globtree_name;
+        genietree_name = subfolder + "/" + genietree_name;
     }
 
     TTree *tree = nullptr;
@@ -58,7 +60,6 @@ void Reader<T>::Open(std::string fname, std::string subfolder)
         abort();
     }
     _tree = tree;
-    _caftype = this->DetectCAFType();
 
     //Loading the gloabl tree
     
@@ -68,54 +69,13 @@ void Reader<T>::Open(std::string fname, std::string subfolder)
         std::cout << "WARNING: No tree named " << globtree_name << " in the input file " << fname << std::endl;
     }
     _global_tree = global_tree;
-}
 
-template<typename T>
-void Reader<T>::SetupTreeHierarchical(){
-    _tree->SetBranchAddress("mc.nu.E", &_data.ev);
-
-    _tree->SetBranchAddress("Ev_reco_numu", &_data.erec);
-    _tree->SetBranchAddress("Ev_reco_nue", &_data.erec_nue);
-
-    _tree->SetBranchAddress("mc.nu.mode",&_data.mode);
-    _tree->SetBranchAddress("mc.nu.momentum.x", &_data.NuMomX);
-    _tree->SetBranchAddress("mc.nu.momentum.y", &_data.NuMomY);
-    _tree->SetBranchAddress("mc.nu.momentum.z", &_data.NuMomZ);
-    _tree->SetBranchAddress("mc.nu.genweight", &_data.weight);
-    _tree->SetBranchAddress("common.ixn.pandora.dir.lngtrk.x", &_data.LepMomX);
-    _tree->SetBranchAddress("common.ixn.pandora.dir.lngtrk.y", &_data.LepMomY);
-    _tree->SetBranchAddress("common.ixn.pandora.dir.lngtrk.z", &_data.LepMomZ);
-    _tree->SetBranchAddress("common.ixn.pandora.nuhyp.cvn.numu", &_data.cvnnumu);
-    _tree->SetBranchAddress("common.ixn.pandora.nuhyp.cvn.nue", &_data.cvnnue);
-    _tree->SetBranchAddress("mc.nu.iscc", &_data.isCC);
-
-    _tree->SetBranchAddress("mc.nu.pdgorig", &_data.nuPDGunosc);
-    _tree->SetBranchAddress("mc.nu.pdg", &_data.nuPDG);
-    _tree->SetBranchAddress("meta.fd_hd.run", &_data.run); //TODO: Probably also add the event number and such things
-    _tree->SetBranchAddress("beam.ismc", &_data.isFHC); //TODO: Change this to an actual isFHC variable
-    // _tree->SetBranchAddress("BeRPA_A_cvwgt", &_data.BeRPA_cvwgt); //TODO: No idea what to do with this
-    _tree->SetBranchAddress("mc.nu.vtx.x", &_data.vtx_x);
-    _tree->SetBranchAddress("mc.nu.vtx.y", &_data.vtx_y);
-    _tree->SetBranchAddress("mc.nu.vtx.z", &_data.vtx_z); 
-
-    _tree->SetBranchAddress("LepPDG",&_data.ipnu); 
-    _tree->SetBranchAddress("LepNuAngle",&_data.LepTheta); //TODO: Find the right variable
-    _tree->SetBranchAddress("mc.nu.Q2",&_data.Q2);
-    
-    //Current location of systs weights
-    _tree->SetBranchAddress("xsSyst_wgt",&_data.weightVec);
-
-    if(_caftype == CAFtype::FLAT_CAF){
-        _tree->SetBranchAddress("pot",&_data.weight); //The weight is stored here in a hacky way at the moment.
+    TTree *genie_tree;
+    _file->GetObject(genietree_name.c_str(), genie_tree);
+    if(genie_tree == nullptr){
+        std::cout << "WARNING: No tree named " << genietree_name << " in the input file " << fname << std::endl;
     }
-    else{
-        _tree->SetBranchAddress("weight",&_data.weight);
-        _tree->SetBranchAddress("genie_weight",&_data.genie_weight); //The weight is stored here in a hacky way at the moment.
-        _tree->SetBranchAddress("nue_w",&_data.nue_w);
-        _tree->SetBranchAddress("numu_w",&_data.numu_w);
-        _tree->SetBranchAddress("xsec",&_data.xsec);
-    }
-    
+    _genie_tree = genie_tree;
 }
 
 template<typename T>
@@ -214,6 +174,16 @@ void Reader<T>::UpdateData(){
 template<typename T>
 TTree* Reader<T>::GetGlobalTree(){
     return _global_tree;
+}
+
+template<typename T>
+TTree* Reader<T>::GetTree(){
+    return _tree;
+}
+
+template<typename T>
+TTree* Reader<T>::GetGenieTree(){
+    return _genie_tree;
 }
 
 template class Reader<float>;

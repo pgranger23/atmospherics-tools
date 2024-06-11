@@ -7,6 +7,6 @@ private:
     void SetupTree();
     void Create(std::string name);
 public:
-    DirWriter(std::string name, TFile *cur_file);
+    DirWriter(std::string name);
     ~DirWriter();
 };

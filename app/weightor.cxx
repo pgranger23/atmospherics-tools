@@ -112,9 +112,9 @@ int main(int argc, char const *argv[])
     std::vector<float> pmns_params = parser.get<std::vector<float>>("--pmns");
 
     FluxManager manager(fluxes);
-    Reader<float> reader(ifilename);
+    Reader<float> reader(ifilename, "cafmaker");
 
-    DirWriter writer("atm_weights", reader.GetFile());
+    DirWriter writer(ofilename);
 
     Calculator<float> calc(manager, reader, writer, exposure_scaling);
 
@@ -128,6 +128,12 @@ int main(int argc, char const *argv[])
 
     calc.SetOscCalculator(&pmns, &earth, prodh, deth);
     calc.Process();
+
+    writer.GetFile()->cd();
+    writer.AddTree(reader.GetTree()->CloneTree(-1, "fast"));
+    writer.AddTree(reader.GetGenieTree()->CloneTree(-1, "fast"));
+    writer.AddTree(reader.GetGlobalTree()->CloneTree(-1, "fast"));
+
     writer.Write();
 
     return 0;

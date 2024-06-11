@@ -25,4 +25,5 @@ public:
     TTree* GetTree();
     void AddNorm();
     void AddTree(TTree *tree);
+    TFile* GetFile();
 };
