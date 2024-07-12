@@ -7,7 +7,7 @@ Reader<T>::Reader(std::string fname, std::string subfolder)
    _data = Data<T>();
    this->SetupTree();
    this->GetPOT();
-   _entry = 0;
+   _entry = -1;
    _nentries = _tree->GetEntries();
 }
 
@@ -17,7 +17,7 @@ Reader<T>::Reader(TTree *tree)
 {
    _data = Data<T>();
    this->SetupTree();
-   _entry = 0;
+   _entry = -1;
    _nentries = _tree->GetEntries();
 }
 
