@@ -2,7 +2,7 @@
 
 This repository contains basic scripts and tools allowing to produce analysis ntuples for the HEP atmospherics analysis.
 The various tools are made available in the `src` directory while some executable sources are provided in `app`.
-For now, the supported input is the legacy CAF format.
+The supported input is the new hierarchical CAF format.
 
 ## Setup
 On SL7:
