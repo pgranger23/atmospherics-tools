@@ -39,6 +39,8 @@ if(ROOT_FOUND)
   include(${ROOT_USE_FILE})
 endif(ROOT_FOUND)
 
+find_package(duneanaobj 03.05.00 REQUIRED)
+
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 

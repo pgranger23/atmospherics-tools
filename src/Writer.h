@@ -6,7 +6,7 @@
 
 class Writer
 {
-private:
+protected:
     
     TTree *_tree;
     Data<double> _data;
@@ -16,6 +16,7 @@ private:
     void SetupTree();
 public:
     TFile *_file;
+    Writer();
     Writer(std::string fname);
     ~Writer();
     void Fill(const Data<double>& data);
@@ -24,4 +25,5 @@ public:
     TTree* GetTree();
     void AddNorm();
     void AddTree(TTree *tree);
+    TFile* GetFile();
 };

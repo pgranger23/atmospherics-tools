@@ -39,9 +39,9 @@ void Calculator<T>::Process(){
 
         //We assume here that the numu flux was used for the generation
         
-        double xsec_w = data.weight/nuMu_flux/POT;
-        double nuE_w = xsec_w*nuE_flux*_exposure_scaling;
-        double nuMu_w = xsec_w*nuMu_flux*_exposure_scaling;
+        double xsec_w = data.weight/nuMu_flux/POT*_exposure_scaling;
+        double nuE_w = nuE_flux;
+        double nuMu_w = nuMu_flux;
 
         double osc_from_e_w = 0;
         double osc_from_mu_w = 0;
@@ -51,8 +51,6 @@ void Calculator<T>::Process(){
             std::tie(osc_from_e_w, osc_from_mu_w) = GetOscWeight(Enu, costh, (Flavour)data.nuPDG);
             final_oscillated_w = xsec_w*(osc_from_e_w*nuE_w + osc_from_mu_w*nuMu_w);
         }
-
-        
 
         data.genie_weight = data.weight;
         data.flux_nue = nuE_flux;

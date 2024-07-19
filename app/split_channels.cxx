@@ -31,7 +31,7 @@ int main(int argc, char const *argv[])
     float exposure_scaling = target_exposure*year/det_mass;
 
     FluxManager manager(fluxes);
-    Reader<float> reader(ifilename, true);
+    Reader<float> reader(ifilename);
 
     Writer writer(ofilename);
 
@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
     writer.WriteFile();
 
     // TTree *tree = writer.GetTree();
-    Reader<double> new_reader(ofilename, false);
+    Reader<double> new_reader(ofilename);
 
     std::map<std::tuple<Flavour, Flavour, Sel>, Writer*> channels;
     

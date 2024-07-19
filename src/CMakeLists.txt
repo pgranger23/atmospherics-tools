@@ -28,11 +28,11 @@ cmessage(STATUS "EIGEN: ${OscLib_LIBS}")
 # part of ERepSim.
 
 set(source_IO
-  Reader.cxx Flux.cxx FluxManager.cxx Calculator.cxx Writer.cxx
+  Reader.cxx Flux.cxx FluxManager.cxx Calculator.cxx Writer.cxx DirWriter.cxx
   )
 
 set(includes_IO
-  Reader.h Flux.h FluxManager.h Calculator.h Writer.h
+  Reader.h Flux.h FluxManager.h Calculator.h Writer.h DirWriter.h
   )
 
 ############################Weightor############################
@@ -62,4 +62,12 @@ install(FILES ${includes_IO} DESTINATION include/WeightorIO)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # target_include_directories(WeightorIO PUBLIC OscLib::All Eigen3::Eigen)
-target_link_libraries(WeightorIO LINK_PUBLIC OscLib::All Eigen3::Eigen)
+target_link_libraries(WeightorIO LINK_PUBLIC OscLib::All Eigen3::Eigen
+                      duneanaobj::StandardRecordProxy
+                      duneanaobj::StandardRecordFlat
+                      duneanaobj::StandardRecord
+                      duneanaobj::StandardRecord_dict)
+target_include_directories(WeightorIO
+  PRIVATE
+  $ENV{SRPROXY_INC}
+)
