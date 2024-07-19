@@ -80,4 +80,4 @@ static inline Data<double> float2double(const Data<float>& data){
 
 
     return data_D;
-};
+}

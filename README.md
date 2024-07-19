@@ -1,4 +1,4 @@
-# Weightor
+# Atmospherics-tools
 
 This repository contains basic scripts and tools allowing to produce analysis ntuples for the HEP atmospherics analysis.
 The various tools are made available in the `src` directory while some executable sources are provided in `app`.

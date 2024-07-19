@@ -21,6 +21,7 @@ add_executable(weightor weightor.cxx)
 target_link_libraries(weightor
   LINK_PUBLIC WeightorIO ROOT::EG ${ROOT_LIBRARIES} OscLib argparse)
 target_compile_features(weightor PRIVATE cxx_std_17)
+
 target_include_directories(weightor
   PRIVATE
   $ENV{SRPROXY_INC}

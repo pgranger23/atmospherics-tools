@@ -20,7 +20,7 @@ endif()
 
 if(NOT DEFINED CMAKE_BUILD_TYPE OR 
     "${CMAKE_BUILD_TYPE}x" STREQUAL "x")
-  set(CMAKE_BUILD_TYPE Debug) #TODO: Change to release when OK
+  set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif()
 
 SET(BUILD_DEBUG_MSGS TRUE)
