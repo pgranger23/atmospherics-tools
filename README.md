@@ -26,3 +26,7 @@ The `weightor.cxx` code produces a `weightor` binary that can be used to compute
 Multiple parameters can be tweaked to produce weight with different parameters or setups. The reference values are provided for the NuFIT 5.2 results and assumes the use of the 2023 HEP atmospherics sample.
 
 The `split_channel.cxx` code produces a `split_channel` binary that is used to split the input sample into many subsamples, separated by initial flavour, final flavour, reco flavour that are used as inputs of MaCh3.
+
+## Example
+An example input CAF file with ~1M events can be found at Fermilab at `/exp/dune/app/users/pgranger/weightor/caf_sum.root`
+To compute the weights for it with the default parameters, one can simply run `./app/weightor -i /exp/dune/app/users/pgranger/weightor/caf_sum.root -o weighted_caf.root`
