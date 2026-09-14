@@ -43,9 +43,9 @@ void Calculator<T>::Process(){
         double nuE_flux = _mgr.GetFlux(nuE, Enu, costh, phi);
         double nuMu_flux = _mgr.GetFlux(nuMu, Enu, costh, phi);
 
-        //We assume here that the numu flux was used for the generation
+        double ref_flux = _mgr.GetFlux(Flavour::Reference, Enu, costh, phi);
         
-        double xsec_w = data.weight/nuMu_flux/POT*_exposure_scaling;
+        double xsec_w = data.weight/ref_flux/POT*_exposure_scaling;
         double nuE_w = nuE_flux;
         double nuMu_w = nuMu_flux;
 
@@ -67,6 +67,17 @@ void Calculator<T>::Process(){
         data.osc_from_e_w = osc_from_e_w;
         data.osc_from_mu_w = osc_from_mu_w;
         data.final_oscillated_w = final_oscillated_w;
+
+        //Reco fravour assignment based on cvn scores
+        if(data.cvn_score_numu > data.cvn_score_nue && data.cvn_score_numu > data.cvn_score_nc){
+            data.sample_id = 0; // numu sample
+        }
+        else if(data.cvn_score_nue > data.cvn_score_numu && data.cvn_score_nue > data.cvn_score_nc){
+            data.sample_id = 1; // nue sample
+        }
+        else{
+            data.sample_id = 2; // nc sample
+        }
 
         _wrt.Fill(data);
     }

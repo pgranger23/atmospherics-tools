@@ -1,10 +1,13 @@
 #include "Oscillogram.h"
+#include "omp.h"
 
 using namespace OscProb;
 
-Oscillogram::Oscillogram(const std::vector<double> &Ebins, const std::vector<double> &Czbins) :
+Oscillogram::Oscillogram(const std::vector<double> &Ebins, const std::vector<double> &Czbins, const std::string &premPath) :
 _Ebins(Ebins),
-_Czbins(Czbins){
+_Czbins(Czbins),
+_prem(PremModel(premPath))
+{
 }
 
 std::vector<double> Oscillogram::Compute(OscPars pars){
@@ -17,18 +20,21 @@ std::vector<double> Oscillogram::Compute(OscPars pars){
 
     _pmns.SetAvgProbPrec(0.01); //Setting the precision for the averaging
 
-    _prem = PremModel("/home/pgranger/OscProb/PremTables/prem_15layers.txt"); //TODO: Find a way to automate this location)
-
 
     int N_Ebins = _Ebins.size() - 1;
     int N_Czbins = _Czbins.size() - 1;
     int osc_size = N_Ebins*N_Czbins*2*3*2;
     std::vector<double> oscillogram(osc_size);
 
+    #pragma omp parallel for
     for(uint i = 0; i < N_Czbins; i++){
+        // Each thread gets its own PremModel and PMNS
+        PremModel prem_local(_prem); // copy constructor
+        PMNS_Fast pmns_local(_pmns);      // copy constructor
+        
         double cosT = 0.5*(_Czbins[i] + _Czbins[i + 1]);
-        _prem.FillPath(cosT);
-        _pmns.SetPath(_prem.GetNuPath());
+        prem_local.FillPath(cosT);
+        pmns_local.SetPath(prem_local.GetNuPath());
 
         for(uint j = 0; j < N_Ebins; j++){
             double E = 0.5*(_Ebins[j] + _Ebins[j + 1]);
@@ -36,10 +42,10 @@ std::vector<double> Oscillogram::Compute(OscPars pars){
 
             int base_idx = 2*3*2*(i*N_Ebins + j);
 
-            _pmns.SetIsNuBar(false);
-            const std::vector<std::vector<double>> &mat = _pmns.AvgProbMatrix(2, 3, E, dE);
-            _pmns.SetIsNuBar(true);
-            const std::vector<std::vector<double>> &mat_anti = _pmns.AvgProbMatrix(2, 3, E, dE);
+            pmns_local.SetIsNuBar(false);
+            const std::vector<std::vector<double>> &mat = pmns_local.AvgProbMatrix(2, 3, E, dE);
+            pmns_local.SetIsNuBar(true);
+            const std::vector<std::vector<double>> &mat_anti = pmns_local.AvgProbMatrix(2, 3, E, dE);
 
             oscillogram[base_idx] = mat[0][0];
             oscillogram[base_idx + 1] = mat[0][1];

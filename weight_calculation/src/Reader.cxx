@@ -174,6 +174,18 @@ void Reader<T>::UpdateData(){
     _data.run = detmeta.run;
     _data.subrun = detmeta.subrun;
     _data.eid = detmeta.event;
+
+    if(_sr->common.ixn.pandora.size() != 1){
+        _data.cvn_score_numu = 0;
+        _data.cvn_score_nue = 0;
+        _data.cvn_score_nc = 1;
+    }
+    else{
+        _data.cvn_score_numu = _sr->common.ixn.pandora[0].nuhyp.cvn.numu;
+        _data.cvn_score_nue = _sr->common.ixn.pandora[0].nuhyp.cvn.nue;
+        _data.cvn_score_nc = _sr->common.ixn.pandora[0].nuhyp.cvn.nc;
+    }
+    
 }
 
 template<typename T>
