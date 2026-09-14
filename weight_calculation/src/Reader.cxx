@@ -169,6 +169,11 @@ void Reader<T>::UpdateData(){
     _data.NuMomZ = _sr->mc.nu[0].momentum.z;
     _data.nuPDG = _sr->mc.nu[0].pdg;
     _data.weight = _sr->mc.nu[0].genweight;
+    // Event identification: take it from whichever FD module recorded the event
+    const auto& detmeta = _sr->meta.fd_vd.enabled ? _sr->meta.fd_vd : _sr->meta.fd_hd;
+    _data.run = detmeta.run;
+    _data.subrun = detmeta.subrun;
+    _data.eid = detmeta.event;
 }
 
 template<typename T>

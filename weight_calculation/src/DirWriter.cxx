@@ -33,6 +33,8 @@ void DirWriter::Create(std::string name)
 
 void DirWriter::SetupTree(){
     _tree->Branch("run", &_data.run);
+    _tree->Branch("subrun", &_data.subrun);
+    _tree->Branch("eid", &_data.eid);
     _tree->Branch("weight",&_data.weight);
     _tree->Branch("flux_nue",&_data.flux_nue);
     _tree->Branch("flux_numu",&_data.flux_numu);
